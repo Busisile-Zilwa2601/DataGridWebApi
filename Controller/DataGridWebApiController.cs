@@ -60,38 +60,42 @@ namespace DataGridWebApi.Controller
         }
 
         [HttpPost("InsertAddress")]
-        public IActionResult InsertAddress([FromForm] string values)
+        public IActionResult InsertAddress([FromBody] AddressEntry values)
         {
-            var newItem = new AddressEntry();
-            JsonConvert.PopulateObject(values, newItem);
 
-            if (!TryValidateModel(newItem))
+            if (!TryValidateModel(values))
                 return BadRequest(ModelState);
 
-            _addressContext.Items.Add(newItem);
+            _addressContext.Items.Add(values);
             _addressContext.SaveChanges();
 
-            return Created("", newItem);
+            return Created("", values);
         }
 
-        [HttpPut("UpdateAddress")]
-        public IActionResult UpdateAddress([FromForm] int key, [FromForm] string values)
+        [HttpPut("UpdateAddress/{key}")]
+        public IActionResult UpdateAddress(int key, [FromBody] AddressEntry values)
         {
             var item = _addressContext.Items.FirstOrDefault(i => i.Id == key);
             if (item == null) return NotFound();
 
-            JsonConvert.PopulateObject(values, item);
+            //Update the fields
+            item.PostalZip = values.PostalZip;
+            item.Address = values.Address;
+            item.City = values.City;
+            item.Country = values.Country;
+            item.Region = values.Region;
 
             if (!TryValidateModel(item))
                 return BadRequest(ModelState);
+
 
             _addressContext.SaveChanges();
 
             return Ok(item);
         }
 
-        [HttpDelete("DeleteAddress")]
-        public IActionResult DeleteAddress([FromForm] int key)
+        [HttpDelete("DeleteAddress/{key}")]
+        public IActionResult DeleteAddress(int key)
         {
             var item = _addressContext.Items.FirstOrDefault(i => i.Id == key);
             if (item == null) return NotFound();
