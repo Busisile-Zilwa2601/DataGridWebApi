@@ -1,11 +1,12 @@
 ﻿using DataGridWebApi.ContextData;
 using DataGridWebApi.Model;
 using Newtonsoft.Json;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DataGridWebApi.Controller
 {
+    [Authorize]
     [ApiController]
     [Route("api/DataGridWebApi")]
     public class DataGridWebApiController: ControllerBase
